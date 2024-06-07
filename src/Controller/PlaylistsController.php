@@ -12,10 +12,10 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Description of PlaylistsController
  *
- * @author emds
+ * @author selsabil
  */
 class PlaylistsController extends AbstractController {
-    
+    private const PATH_PLAYLIST = "pages/playlists.html.twig";
     /**
      * 
      * @var PlaylistRepository
@@ -46,13 +46,20 @@ class PlaylistsController extends AbstractController {
      * @Route("/playlists", name="playlists")
      * @return Response
      */
-    public function index(): Response{
-        $playlists = $this->playlistRepository->findAllOrderByName('ASC');
-        $categories = $this->categorieRepository->findAll();
-        return $this->render("pages/playlists.html.twig", [
-            'playlists' => $playlists,
-            'categories' => $categories            
-        ]);
+    public function index(): Response
+    {
+    $playlists = $this->playlistRepository->findAllOrderByName('ASC');
+    $categories = $this->categorieRepository->findAll();
+
+    // Récupérer le nombre de formations pour chaque playlist
+    foreach ($playlists as $playlist) {
+        $playlist->setNbre($this->playlistRepository->countFormationsForPlaylist($playlist->getId()));
+    }
+
+    return $this->render(self::PATH_PLAYLIST, [
+        'playlists' => $playlists,
+        'categories' => $categories
+    ]);
     }
 
     /**
@@ -61,19 +68,29 @@ class PlaylistsController extends AbstractController {
      * @param type $ordre
      * @return Response
      */
-    public function sort($champ, $ordre): Response{
-        switch($champ){
+    public function sort($champ, $ordre): Response
+    {
+        switch ($champ) {
             case "name":
                 $playlists = $this->playlistRepository->findAllOrderByName($ordre);
                 break;
+            case "nbre":
+                $playlists = $this->playlistRepository->findAllOrderByNbre($ordre);
+                break;
         }
+
         $categories = $this->categorieRepository->findAll();
-        return $this->render("pages/playlists.html.twig", [
+
+        // Récupérer le nombre de formations pour chaque playlist
+        foreach ($playlists as $playlist) {
+            $playlist->setNbre($this->playlistRepository->countFormationsForPlaylist($playlist->getId()));
+        }
+
+        return $this->render(self::PATH_PLAYLIST, [
             'playlists' => $playlists,
-            'categories' => $categories            
+            'categories' => $categories
         ]);
-    }          
-	
+    }         
     /**
      * @Route("/playlists/recherche/{champ}/{table}", name="playlists.findallcontain")
      * @param type $champ
@@ -85,7 +102,7 @@ class PlaylistsController extends AbstractController {
         $valeur = $request->get("recherche");
         $playlists = $this->playlistRepository->findByContainValue($champ, $valeur, $table);
         $categories = $this->categorieRepository->findAll();
-        return $this->render("pages/playlists.html.twig", [
+        return $this->render(self::PATH_PLAYLIST, [
             'playlists' => $playlists,
             'categories' => $categories,            
             'valeur' => $valeur,
@@ -98,15 +115,20 @@ class PlaylistsController extends AbstractController {
      * @param type $id
      * @return Response
      */
-    public function showOne($id): Response{
+    public function showOne($id): Response
+    {
         $playlist = $this->playlistRepository->find($id);
         $playlistCategories = $this->categorieRepository->findAllForOnePlaylist($id);
         $playlistFormations = $this->formationRepository->findAllForOnePlaylist($id);
+
+        // Récupérer le nombre de formations pour la playlist
+        $playlist->setNbre($this->playlistRepository->countFormationsForPlaylist($id));
+
         return $this->render("pages/playlist.html.twig", [
             'playlist' => $playlist,
             'playlistcategories' => $playlistCategories,
             'playlistformations' => $playlistFormations
-        ]);        
-    }       
+        ]);
+    }     
     
 }

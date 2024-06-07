@@ -3,6 +3,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
+               
                 <th class="text-left align-top" scope="col">
                     playlist<br />
                     <a href="{{ path('playlists.sort', {champ:'name', ordre:'ASC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true"><</a>
@@ -12,10 +13,11 @@
                             <input type="text" class="sm" name="recherche" 
                                    value="{% if valeur|default and not table|default %}{{ valeur }}{% endif %}">
                             <input type="hidden" name="_token" value="{{ csrf_token('filtre_name') }}">
-                            <button type="submit" class="btn btn-info mb-2 btn-sm">filtrer</button>
+                            <button type="submit" class="btn btn-info mb-2 btn-sm">filtrreer</button>
                         </div>
                     </form>                    
                 </th>
+                
                 <th class="text-left align-top" scope="col">
                     catégories
                     <form class="form-inline mt-1" method="POST" action="{{ path('playlists.findallcontain', {champ:'id', table:'categories'}) }}">
@@ -34,7 +36,12 @@
                 </th>
                 <th class="text-center align-top" scope="col">
                     &nbsp;
-                </th>				
+                </th>
+                <th class="text-center align-top" scope="col">
+                    Nombre de formations<br />
+                    <a href="{{ path('playlists.sort', {champ:'nbre', ordre:'ASC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true"><</a>
+                    <a href="{{ path('playlists.sort', {champ:'nbre', ordre:'DESC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true">></a>
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -57,7 +64,8 @@
                         </td>            					
                         <td class="text-center">
                             <a href="{{ path('playlists.showone', {id:playlists[k].id}) }}" class="btn btn-secondary">Voir détail</a>
-                        </td> 					
+                        </td>
+                        <td class="text-center">{{ playlists[k].nbre }}</td>                        
                     </tr>
                 {% endfor %}	
             {% endif %}

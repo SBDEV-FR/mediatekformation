@@ -34,6 +34,11 @@ class Playlist
      */
     private $formations;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $nbre;
+
     public function __construct()
     {
         $this->formations = new ArrayCollection();
@@ -102,16 +107,28 @@ class Playlist
 	 * @return Collection<int, string>
 	 */	
 	public function getCategoriesPlaylist() : Collection
-	{
-		$categories = new ArrayCollection();
-		foreach($this->formations as $formation){
-			$categoriesFormation = $formation->getCategories();
-			foreach($categoriesFormation as $categorieFormation)
-			if(!$categories->contains($categorieFormation->getName())){
-				$categories[] = $categorieFormation->getName();
-			}
-		}
-		return $categories;
-	}
+         	{
+         		$categories = new ArrayCollection();
+         		foreach($this->formations as $formation){
+         			$categoriesFormation = $formation->getCategories();
+         			foreach($categoriesFormation as $categorieFormation)
+         			if(!$categories->contains($categorieFormation->getName())){
+         				$categories[] = $categorieFormation->getName();
+         			}
+         		}
+         		return $categories;
+         	}
+
+    public function getNbre(): ?int
+    {
+        return $this->nbre;
+    }
+
+    public function setNbre(int $nbre): self
+    {
+        $this->nbre = $nbre;
+
+        return $this;
+    }
 	
 }

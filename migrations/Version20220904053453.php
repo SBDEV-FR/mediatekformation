@@ -12,20 +12,28 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20220904053453 extends AbstractMigration
 {
-    public function getDescription(): string
+    public function getDescription() : string
     {
-        return '';
+        return 'Add nbre_playlist table';
     }
 
-    public function up(Schema $schema): void
+    public function up(Schema $schema) : void
     {
-        // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE formation DROP miniature');
+        // Créer la table nbre_playlist
+        $table = $schema->createTable('nbre_playlist');
+        $table->addColumn('id', 'integer');
+        $table->addColumn('nombre', 'integer');
+        
+        // Définir la clé primaire
+        $table->setPrimaryKey(['id']);
+        
+        // Définir la clé étrangère vers la table playlist
+        $table->addForeignKeyConstraint('playlist', ['id'], ['id'], [], 'fk_playlist_id');
     }
 
-    public function down(Schema $schema): void
+    public function down(Schema $schema) : void
     {
-        // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE formation ADD miniature VARCHAR(100) DEFAULT NULL');
+        // Supprimer la table nbre_playlist si nécessaire
+        $schema->dropTable('nbre_playlist');
     }
 }

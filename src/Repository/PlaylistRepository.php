@@ -53,7 +53,24 @@ class PlaylistRepository extends ServiceEntityRepository
                 ->getQuery()
                 ->getResult();       
     } 
-	
+
+    /**
+    * Retourne le nombre de formations pour une playlist donnée
+    * @param int $playlistId
+    * @return int
+    */
+   public function countFormationsForPlaylist(int $playlistId): int
+   {
+       $qb = $this->createQueryBuilder('p')
+           ->select('COUNT(f.id)')
+           ->leftJoin('p.formations', 'f')
+           ->where('p.id = :playlistId')
+           ->setParameter('playlistId', $playlistId)
+           ->getQuery();
+
+       return $qb->getSingleScalarResult();
+   }
+   
     /**
      * Enregistrements dont un champ contient une valeur
      * ou tous les enregistrements si la valeur est vide
@@ -87,8 +104,19 @@ class PlaylistRepository extends ServiceEntityRepository
                     ->getResult();              
             
         }           
+    }  
+    /**
+     * Retourne toutes les playlists triées sur le nombre de formations
+     * @param string $ordre
+     * @return Playlist[]
+     */
+    public function findAllOrderByNbre(string $ordre): array
+    {
+        return $this->createQueryBuilder('p')
+            ->leftJoin('p.formations', 'f')
+            ->groupBy('p.id')
+            ->orderBy('COUNT(f.id)', $ordre)
+            ->getQuery()
+            ->getResult();
     }    
-
-
-    
 }
