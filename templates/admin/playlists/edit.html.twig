@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Modifier la playlist</h1>
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button class="btn btn-primary">Enregistrer</button>
+    {{ form_end(form) }}
+
+    <h2>Formations dans cette playlist</h2>
+    <ul>
+        {% for formation in playlist.formations %}
+            <li>{{ formation.title }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+{# empty Twig template #}
