@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Formation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\Categorie;
 
 /**
  * @extends ServiceEntityRepository<Formation>
@@ -118,5 +119,19 @@ class FormationRepository extends ServiceEntityRepository
                 ->getQuery()
                 ->getResult();        
     }
-    
+        /**
+     * Trouve les formations associées à une catégorie spécifique
+     * @param Categorie $categorie
+     * @return Formation[]
+     */
+    public function findByCategorie(Categorie $categorie): array
+    {
+        return $this->createQueryBuilder('f')
+            ->join('f.categories', 'c')
+            ->where('c = :categorie')
+            ->setParameter('categorie', $categorie)
+            ->getQuery()
+            ->getResult();
+    }
+
 }
